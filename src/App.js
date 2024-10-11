@@ -4,6 +4,10 @@ import { loginRequest } from "./authConfig";
 import './App.css';
 import GraphData from './GraphData';
 
+/* MS GraphQL Abfrage
+   Version vom 1.0
+   Autor: Patrick May */
+
 function ProfileContent() {
   return (
     <div>
