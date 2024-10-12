@@ -4,7 +4,8 @@ import { Client } from '@microsoft/microsoft-graph-client';
 
 function GraphData() {
   const { instance, accounts } = useMsal();
-  const [graphData, setGraphData] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [licenses, setLicenses] = useState([]);
 
   useEffect(() => {
     if (accounts.length > 0) {
@@ -22,11 +23,21 @@ function GraphData() {
           }
         });
 
+        // Benutzer abrufen
         client.api('/users').get((err, res) => {
           if (err) {
             console.error(err);
           } else {
-            setGraphData(res.value);
+            setUsers(res.value);
+          }
+        });
+
+        // Lizenzen abrufen  
+        client.api('/subscribedSkus').get((err, res) => {
+          if (err) {
+            console.error(err);
+          } else {
+            setLicenses(res.value);  
           }
         });
       }).catch((err) => {
@@ -35,20 +46,36 @@ function GraphData() {
     }
   }, [accounts, instance]);
 
-  if (!graphData) {
-    return <p>Lade Daten...</p>;
-  }
-
   return (
     <div>
       <h2>Benutzerliste aus MS Graph</h2>
       <ul>
-        {graphData.map((user) => (
+        {users.map((user) => (
           <li key={user.id}>
             {user.displayName} ({user.userPrincipalName})
           </li>
         ))}
       </ul>
+
+      <h2>Lizenzen aus MS Graph</h2>  
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Genutzte Einheiten</th>
+            <th>Erworbene Einheiten</th>
+          </tr>
+        </thead>
+        <tbody>
+          {licenses.map((license) => (
+            <tr key={license.skuId}>
+              <td>{license.skuPartNumber}</td>
+              <td>{license.consumedUnits}</td>
+              <td>{license.prepaidUnits.enabled}</td>
+            </tr>
+          ))}  
+        </tbody>
+      </table>
     </div>
   );
 }
