@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import './index.css';
@@ -14,12 +14,21 @@ const msalConfig = {
 };
 
 const msalInstance = new PublicClientApplication(msalConfig);
+const rootElement = document.getElementById('root');
 
-ReactDOM.render(
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <MsalProvider instance={msalInstance}>
-      <App />
-    </MsalProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
+      <div style={{flex: '0 0 auto', padding: '10px', backgroundColor: 'black', color: 'white'}}>
+        React-App mit Microsoft Graph-API
+      </div>
+      <div style={{flex: '1 1 auto', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{fontSize: '1.5em'}}>
+          <MsalProvider instance={msalInstance}>
+            <App />
+          </MsalProvider>
+        </div>
+      </div>
+    </div>
+  </React.StrictMode>
 );
